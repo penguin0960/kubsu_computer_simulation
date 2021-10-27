@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Union
 
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import ReplyKeyboardRemove, Update
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -12,19 +12,13 @@ from telegram.ext import (
     CallbackContext,
 )
 
-from data import FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE
+from data import FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE, \
+    STATES_ORDER, StateType, QUESTION_MESSAGES
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
-
 logger = logging.getLogger(__name__)
-
-KEYBOARD_YES_OR_NO = ReplyKeyboardMarkup(
-    keyboard=[['Да', 'Нет']],
-    one_time_keyboard=True,
-    input_field_placeholder='Да или Нет?',
-)
 
 
 def log_user_info(user_nickname: str, field_name: str, value: Union[str, int]) -> None:
@@ -35,211 +29,54 @@ def log_user_info(user_nickname: str, field_name: str, value: Union[str, int]) -
     ))
 
 
-def start(update: Update, context: CallbackContext) -> int:
+def get_next_state(current_state: StateType) -> StateType:
+    if current_state == len(STATES_ORDER) - 1:
+        return ConversationHandler.END
+
+    return STATES_ORDER[STATES_ORDER.index(current_state) + 1]
+
+
+def start(update: Update, context: CallbackContext) -> StateType:
     """Starts the conversation and asks the user about their gender."""
     update.message.reply_text(
         'Здравствуйте!\n'
-        'Чтобы перестать общаться со мной, нажмите /cancel.\n'
-        'Введите ваше ФИО:'
+        'Чтобы перестать общаться со мной, нажмите /cancel.'
     )
-    return FIO
+    context.user_data['answers'] = {}
+    next_state = STATES_ORDER[0]
+    update.message.reply_text(**QUESTION_MESSAGES[next_state])
+    context.user_data['state'] = next_state
+    return next_state
 
 
-def fio(update: Update, context: CallbackContext) -> int:
+def get_answer(update: Update, context: CallbackContext) -> StateType:
     user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[FIO] = user_answer
-    context.user_data['success'] = True
+    answer = update.message.text
+    user_data = context.user_data
+    current_state = user_data['state']
+    user_data['answers'][current_state] = answer
     log_user_info(
         user_nickname=user.username,
-        field_name='fio',
-        value=user_answer,
+        field_name=current_state,
+        value=answer,
     )
-    update.message.reply_text('Введите ваш возраст:')
-    return AGE
+    next_state = get_next_state(current_state)
 
+    if next_state != ConversationHandler.END:
+        update.message.reply_text(**QUESTION_MESSAGES[next_state])
+        user_data['state'] = next_state
+        return next_state
 
-def age(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = int(update.message.text)
-    context.user_data[AGE] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='age',
-        value=user_answer,
-    )
-    if user_answer > 40:
-        context.user_data['success'] = False
-
-    update.message.reply_text('Введите ваш город проживания:')
-    return CITY
-
-
-def city(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[CITY] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='city',
-        value=user_answer,
-    )
-    update.message.reply_text('Введите ваш номер телефона:')
-    return PHONE
-
-
-def phone(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[PHONE] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='phone',
-        value=user_answer,
-    )
-    update.message.reply_text('Введите ваш E-mail:')
-    return MAIL
-
-
-def mail(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[MAIL] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='email',
-        value=user_answer,
-    )
-
-    update.message.reply_text(
-        'Есть ли у вас образование в сфере дизайна?',
-        reply_markup=KEYBOARD_YES_OR_NO,
-    )
-
-    return EDUCATION
-
-
-def education(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[EDUCATION] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='education',
-        value=user_answer,
-    )
-    if user_answer == 'Нет':
-        context.user_data['success'] = False
-
-    update.message.reply_text(
-        'Умеете ли вы работать в Adobe Illustrator и Photoshop?',
-        reply_markup=KEYBOARD_YES_OR_NO,
-    )
-    return SKILLS
-
-
-def skills(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[SKILLS] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='skills',
-        value=user_answer,
-    )
-    if user_answer == 'Нет':
-        context.user_data['success'] = False
-
-    update.message.reply_text('Укажите ваш стаж работы дизайнером (в месяцах):')
-    return EXPERIENCE
-
-
-def experience(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = int(update.message.text)
-    context.user_data[EXPERIENCE] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='experience',
-        value=user_answer,
-    )
-    if user_answer < 12:
-        context.user_data['success'] = False
-
-    update.message.reply_text('Пришлите ссылку на портфолио:')
-    return PORTFOLIO
-
-
-def portfolio(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[PORTFOLIO] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='portfolio',
-        value=user_answer,
-    )
-
-    update.message.reply_text(
-        'Готовы ли вы к работе на полную занятость в нашей компании? (5-8ч/день)',
-        reply_markup=KEYBOARD_YES_OR_NO,
-    )
-
-    return FULL_DAY
-
-
-def full_day(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[FULL_DAY] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='full_day',
-        value=user_answer,
-    )
-    if user_answer == 'Нет':
-        context.user_data['success'] = False
-    
-    update.message.reply_text('Предпочитаемый уровень зарплаты:')
-    return SALARY
-
-
-def salary(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = int(update.message.text)
-    context.user_data[SALARY] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='salary',
-        value=user_answer,
-    )
-    if user_answer > 70000:
-        context.user_data['success'] = False
-
-    update.message.reply_text('Из какого источника вы узнали о вакансии?')
-    return SOURCE
-
-
-def source(update: Update, context: CallbackContext) -> int:
-    user = update.message.from_user
-    user_answer = update.message.text
-    context.user_data[SOURCE] = user_answer
-    log_user_info(
-        user_nickname=user.username,
-        field_name='source',
-        value=user_answer,
-    )
     update.message.reply_text('Спасибо за ответы!')
-
-    if context.user_data['success']:
+    if True:
         update.message.reply_text('Мы приглашаем вас на собеседование!')
     else:
         update.message.reply_text('К сожалению, вы нам не подходите')
 
-    return ConversationHandler.END
+    return next_state
 
 
-def cancel(update: Update, context: CallbackContext) -> int:
+def cancel(update: Update, context: CallbackContext) -> StateType:
     """Cancels and ends the conversation."""
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
@@ -247,6 +84,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
         'Bye! I hope we can talk again some day.',
         reply_markup=ReplyKeyboardRemove(),
     )
+    context.user_data.clear()
 
     return ConversationHandler.END
 
@@ -260,18 +98,18 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
-            FIO: [MessageHandler(Filters.text & ~Filters.command, fio)],
-            AGE: [MessageHandler(Filters.regex(r'^(\d+)$'), age)],
-            CITY: [MessageHandler(Filters.text & ~Filters.command, city)],
-            PHONE: [MessageHandler(Filters.regex(r'^(\d{11})$'), phone)],
-            MAIL: [MessageHandler(Filters.regex(r'^[\w\-]+@\w+\.\w+$'), mail)],
-            EDUCATION: [MessageHandler(Filters.regex('^(Да|Нет)$'), education)],
-            SKILLS: [MessageHandler(Filters.regex('^(Да|Нет)$'), skills)],
-            EXPERIENCE: [MessageHandler(Filters.regex(r'^(\d+)$'), experience)],
-            PORTFOLIO: [MessageHandler(Filters.text & ~Filters.command, portfolio)],
-            FULL_DAY: [MessageHandler(Filters.regex('^(Да|Нет)$'), full_day)],
-            SALARY: [MessageHandler(Filters.regex(r'^(\d+)$'), salary)],
-            SOURCE: [MessageHandler(Filters.text & ~Filters.command, source)],
+            FIO: [MessageHandler(Filters.text & ~Filters.command, get_answer)],
+            AGE: [MessageHandler(Filters.regex(r'^(\d+)$'), get_answer)],
+            CITY: [MessageHandler(Filters.text & ~Filters.command, get_answer)],
+            PHONE: [MessageHandler(Filters.regex(r'^(\d{11})$'), get_answer)],
+            MAIL: [MessageHandler(Filters.regex(r'^[\w\-]+@\w+\.\w+$'), get_answer)],
+            EDUCATION: [MessageHandler(Filters.regex('^(Да|Нет)$'), get_answer)],
+            SKILLS: [MessageHandler(Filters.regex('^(Да|Нет)$'), get_answer)],
+            EXPERIENCE: [MessageHandler(Filters.regex(r'^(\d+)$'), get_answer)],
+            PORTFOLIO: [MessageHandler(Filters.text & ~Filters.command, get_answer)],
+            FULL_DAY: [MessageHandler(Filters.regex('^(Да|Нет)$'), get_answer)],
+            SALARY: [MessageHandler(Filters.regex(r'^(\d+)$'), get_answer)],
+            SOURCE: [MessageHandler(Filters.text & ~Filters.command, get_answer)],
         },
         fallbacks=[CommandHandler('cancel', cancel)],
     )

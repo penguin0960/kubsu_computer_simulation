@@ -1,6 +1,7 @@
 from typing import Dict, Union
 
 from data import WEIGHTS
+from logger import logger
 
 SUCCESS_INTERVIEW_RATING = 0
 YES_NO_VALUES = {
@@ -9,8 +10,13 @@ YES_NO_VALUES = {
 }
 
 
-def is_success_interview(answers: Dict[str, str]) -> bool:
-    return calculate_rating(answers) > SUCCESS_INTERVIEW_RATING
+def is_success_interview(username: str, answers: Dict[str, str]) -> bool:
+    user_rating = calculate_rating(answers)
+    logger.info('{username} rating = {rating}'.format(
+        username=username,
+        rating=user_rating,
+    ))
+    return user_rating > SUCCESS_INTERVIEW_RATING
 
 
 def calculate_rating(answers: Dict[str, str]) -> int:

@@ -9,14 +9,14 @@ YES_NO_VALUES = {
 }
 
 
-def is_success_interview(answers: Dict[str: str]) -> bool:
+def is_success_interview(answers: Dict[str, str]) -> bool:
     return calculate_rating(answers) > SUCCESS_INTERVIEW_RATING
 
 
-def calculate_rating(answers: Dict[str: str]) -> int:
+def calculate_rating(answers: Dict[str, str]) -> int:
     important_answers = {
         key: value
-        for key, value in answers.items
+        for key, value in answers.items()
         if key in WEIGHTS
     }
     formatted_answers = format_answers(important_answers)
@@ -27,9 +27,9 @@ def calculate_rating(answers: Dict[str: str]) -> int:
     return rating
 
 
-def format_answers(answers: Dict[str: str]) -> Dict[str: int]:
+def format_answers(answers: Dict[str, str]) -> Dict[str, int]:
     result = {}
     for key, value in answers.items():
-        result = YES_NO_VALUES[value] if value in YES_NO_VALUES else int(value)
+        result[key] = YES_NO_VALUES[value] if (value in YES_NO_VALUES) else int(value)
 
     return result

@@ -12,6 +12,8 @@ from telegram.ext import (
     CallbackContext,
 )
 
+from data import FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
@@ -23,8 +25,6 @@ KEYBOARD_YES_OR_NO = ReplyKeyboardMarkup(
     one_time_keyboard=True,
     input_field_placeholder='Да или Нет?',
 )
-
-FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE = range(12)
 
 
 def log_user_info(user_nickname: str, field_name: str, value: Union[str, int]) -> None:
@@ -46,14 +46,13 @@ def start(update: Update, context: CallbackContext) -> int:
 
 
 def fio(update: Update, context: CallbackContext) -> int:
-    field_name = 'fio'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[FIO] = user_answer
     context.user_data['success'] = True
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='fio',
         value=user_answer,
     )
     update.message.reply_text('Введите ваш возраст:')
@@ -61,13 +60,12 @@ def fio(update: Update, context: CallbackContext) -> int:
 
 
 def age(update: Update, context: CallbackContext) -> int:
-    field_name = 'age'
     user = update.message.from_user
     user_answer = int(update.message.text)
-    context.user_data[field_name] = user_answer
+    context.user_data[AGE] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='age',
         value=user_answer,
     )
     if user_answer > 40:
@@ -78,13 +76,12 @@ def age(update: Update, context: CallbackContext) -> int:
 
 
 def city(update: Update, context: CallbackContext) -> int:
-    field_name = 'city'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[CITY] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='city',
         value=user_answer,
     )
     update.message.reply_text('Введите ваш номер телефона:')
@@ -92,13 +89,12 @@ def city(update: Update, context: CallbackContext) -> int:
 
 
 def phone(update: Update, context: CallbackContext) -> int:
-    field_name = 'phone'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[PHONE] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='phone',
         value=user_answer,
     )
     update.message.reply_text('Введите ваш E-mail:')
@@ -106,13 +102,12 @@ def phone(update: Update, context: CallbackContext) -> int:
 
 
 def mail(update: Update, context: CallbackContext) -> int:
-    field_name = 'email'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[MAIL] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='email',
         value=user_answer,
     )
 
@@ -125,13 +120,12 @@ def mail(update: Update, context: CallbackContext) -> int:
 
 
 def education(update: Update, context: CallbackContext) -> int:
-    field_name = 'education'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[EDUCATION] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='education',
         value=user_answer,
     )
     if user_answer == 'Нет':
@@ -145,13 +139,12 @@ def education(update: Update, context: CallbackContext) -> int:
 
 
 def skills(update: Update, context: CallbackContext) -> int:
-    field_name = 'skills'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[SKILLS] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='skills',
         value=user_answer,
     )
     if user_answer == 'Нет':
@@ -162,13 +155,12 @@ def skills(update: Update, context: CallbackContext) -> int:
 
 
 def experience(update: Update, context: CallbackContext) -> int:
-    field_name = 'experience'
     user = update.message.from_user
     user_answer = int(update.message.text)
-    context.user_data[field_name] = user_answer
+    context.user_data[EXPERIENCE] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='experience',
         value=user_answer,
     )
     if user_answer < 12:
@@ -179,13 +171,12 @@ def experience(update: Update, context: CallbackContext) -> int:
 
 
 def portfolio(update: Update, context: CallbackContext) -> int:
-    field_name = 'portfolio'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[PORTFOLIO] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='portfolio',
         value=user_answer,
     )
 
@@ -198,13 +189,12 @@ def portfolio(update: Update, context: CallbackContext) -> int:
 
 
 def full_day(update: Update, context: CallbackContext) -> int:
-    field_name = 'full_day'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[FULL_DAY] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='full_day',
         value=user_answer,
     )
     if user_answer == 'Нет':
@@ -215,13 +205,12 @@ def full_day(update: Update, context: CallbackContext) -> int:
 
 
 def salary(update: Update, context: CallbackContext) -> int:
-    field_name = 'salary'
     user = update.message.from_user
     user_answer = int(update.message.text)
-    context.user_data[field_name] = user_answer
+    context.user_data[SALARY] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='salary',
         value=user_answer,
     )
     if user_answer > 70000:
@@ -232,17 +221,16 @@ def salary(update: Update, context: CallbackContext) -> int:
 
 
 def source(update: Update, context: CallbackContext) -> int:
-    field_name = 'source'
     user = update.message.from_user
     user_answer = update.message.text
-    context.user_data[field_name] = user_answer
+    context.user_data[SOURCE] = user_answer
     log_user_info(
         user_nickname=user.username,
-        field_name=field_name,
+        field_name='source',
         value=user_answer,
     )
-
     update.message.reply_text('Спасибо за ответы!')
+
     if context.user_data['success']:
         update.message.reply_text('Мы приглашаем вас на собеседование!')
     else:

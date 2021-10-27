@@ -12,6 +12,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
+from analysis import is_success_interview
 from data import FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE, \
     STATES_ORDER, StateType, QUESTION_MESSAGES
 
@@ -68,7 +69,7 @@ def get_answer(update: Update, context: CallbackContext) -> StateType:
         return next_state
 
     update.message.reply_text('Спасибо за ответы!')
-    if True:
+    if is_success_interview(user_data['answers']):
         update.message.reply_text('Мы приглашаем вас на собеседование!')
     else:
         update.message.reply_text('К сожалению, вы нам не подходите')

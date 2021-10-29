@@ -1,13 +1,7 @@
 from typing import Dict
 
-from data import WEIGHTS, SALARY, AGE, MAX_SALARY, MAX_AGE
+from data import WEIGHTS, SALARY, AGE, MAX_SALARY, MAX_AGE, SUCCESS_INTERVIEW_RATING, YES_NO_VALUES
 from logger import logger
-
-SUCCESS_INTERVIEW_RATING = 0
-YES_NO_VALUES = {
-    'Да': 1,
-    'Нет': 0,
-}
 
 
 def is_success_interview(username: str, answers: Dict[str, str]) -> bool:

@@ -12,8 +12,23 @@ from telegram.ext import (
 )
 
 from analysis import is_success_interview
-from data import FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE, \
-    STATES_ORDER, StateType, QUESTION_MESSAGES
+from data import (
+    FIO,
+    AGE,
+    CITY,
+    PHONE,
+    MAIL,
+    EDUCATION,
+    SKILLS,
+    EXPERIENCE,
+    PORTFOLIO,
+    FULL_DAY,
+    SALARY,
+    SOURCE,
+    STATES_ORDER,
+    StateType,
+    QUESTION_MESSAGES,
+)
 from logger import logger
 
 

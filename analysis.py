@@ -1,6 +1,16 @@
 from typing import Dict
 
-from data import WEIGHTS, SALARY, AGE, MAX_SALARY, MAX_AGE, SUCCESS_INTERVIEW_RATING, YES_NO_VALUES
+from data import (
+    WEIGHTS,
+    SALARY,
+    AGE,
+    MAX_SALARY,
+    MAX_AGE,
+    SUCCESS_INTERVIEW_RATING,
+    YES_NO_VALUES,
+    EXPERIENCE,
+    MIN_EXPERIENCE,
+)
 from logger import logger
 
 
@@ -34,6 +44,8 @@ def format_answers(answers: Dict[str, str]) -> Dict[str, int]:
             result[key] = MAX_SALARY - int(value)
         elif key == AGE:
             result[key] = MAX_AGE - int(value)
+        elif key == EXPERIENCE:
+            result[key] = int(value) - MIN_EXPERIENCE
         else:
             result[key] = YES_NO_VALUES[value] if (value in YES_NO_VALUES) else int(value)
 

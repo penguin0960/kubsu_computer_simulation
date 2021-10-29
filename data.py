@@ -3,34 +3,20 @@ from keyboards import KEYBOARD_YES_OR_NO
 MAX_SALARY = 70000
 MAX_AGE = 40
 MIN_EXPERIENCE = 12
-SUCCESS_INTERVIEW_RATING = 0
+SUCCESS_INTERVIEW_RATING = 9
 YES_NO_VALUES = {
     'Да': 1,
     'Нет': 0,
 }
 FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE = range(12)
 WEIGHTS = {
-    AGE: 0,
-    EDUCATION: 0,
-    SKILLS: 0,
-    EXPERIENCE: 0,
-    FULL_DAY: 0,
-    SALARY: 0,
+    AGE: 0.2,
+    EDUCATION: 1,
+    SKILLS: 3,
+    EXPERIENCE: 0.15,
+    FULL_DAY: 3,
+    SALARY: 0.0001,
 }
-# FIO, AGE, CITY, PHONE, MAIL, EDUCATION, SKILLS, EXPERIENCE, PORTFOLIO, FULL_DAY, SALARY, SOURCE = (
-#     'fio',
-#     'age',
-#     'city',
-#     'phone',
-#     'mail',
-#     'education',
-#     'skills',
-#     'experience',
-#     'portfolio',
-#     'full_day',
-#     'salary',
-#     'source',
-# )
 STATES_ORDER = (
     FIO,
     AGE,

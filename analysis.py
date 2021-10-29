@@ -31,9 +31,17 @@ def calculate_rating(answers: Dict[str, str]) -> int:
     }
     formatted_answers = format_answers(important_answers)
     rating = 0
+    calculate_rating_history = []
     for key, value in formatted_answers.items():
-        rating += value * WEIGHTS[key]
+        current_weight = WEIGHTS[key]
+        rating += value * current_weight
+        calculate_rating_history.append(' {value} * {weight} [{key}]'.format(
+            value=value,
+            weight=current_weight,
+            key=key,
+        ))
 
+    logger.info('rating =' + ' +'.join(calculate_rating_history))
     return rating
 
 

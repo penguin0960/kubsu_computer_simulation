@@ -1,6 +1,6 @@
-from typing import Dict, Union
+from typing import Dict
 
-from data import WEIGHTS
+from data import WEIGHTS, SALARY, AGE, MAX_SALARY, MAX_AGE
 from logger import logger
 
 SUCCESS_INTERVIEW_RATING = 0
@@ -36,6 +36,11 @@ def calculate_rating(answers: Dict[str, str]) -> int:
 def format_answers(answers: Dict[str, str]) -> Dict[str, int]:
     result = {}
     for key, value in answers.items():
-        result[key] = YES_NO_VALUES[value] if (value in YES_NO_VALUES) else int(value)
+        if key == SALARY:
+            result[key] = MAX_SALARY - int(value)
+        elif key == AGE:
+            result[key] = MAX_AGE - int(value)
+        else:
+            result[key] = YES_NO_VALUES[value] if (value in YES_NO_VALUES) else int(value)
 
     return result
